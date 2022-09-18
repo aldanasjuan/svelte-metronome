@@ -12,7 +12,6 @@
 		}
 	}
 	function close() {
-		console.log('close');
 		open = false;
 	}
 </script>

@@ -7,7 +7,6 @@
   let nextSong;
   let prevSong;
   let length;
-  $: console.log({currentSong, songNumber})
 </script>
 
 <Playlist bind:currentSong bind:songNumber bind:prevSong bind:nextSong bind:length/>
