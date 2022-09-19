@@ -7,7 +7,10 @@
   let nextSong;
   let prevSong;
   let length;
+
 </script>
+
+
 
 <Playlist bind:currentSong bind:songNumber bind:prevSong bind:nextSong bind:length/>
 {#key currentSong}
@@ -17,8 +20,11 @@
     songName={currentSong.title || ""} 
     {songNumber} tempo={currentSong?.tempo} 
     beatsPerBar={currentSong?.beatsPerBar} 
-    startAt={currentSong?.startAt} 
+    startAt={currentSong?.startAt || -1} 
     volume={currentSong?.volume}
+    stopAt={currentSong?.stopAt || -1}
+    sequence={currentSong?.sequence || []}
     {length}
   />
 {/key}
+

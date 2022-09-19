@@ -1,8 +1,10 @@
 :root{
   --primary: #12130F;
+  --gray: #7e8a96;
   --red:#FB3640;
   --red-dark: #4a1919;
   --verdi: #37dbdb;
+  --purple: #cf85f2;
   --yellow: #F4D35E;
   --green: #87FF65;
 }
@@ -14,8 +16,8 @@ body, html{
   margin:0;
 }
 main{
-  height: 100%;
   overflow:auto;
+  height: 100%;
 }
 
 * {
@@ -37,12 +39,13 @@ body{
   color: inherit;
   font-variation-settings:
   'FILL' 0,
-  'wght' 400,
+  'wght' 600,
   'GRAD' 0,
   'opsz' 48
 }
 
 button{
+  user-select:none;
   font-weight: 600;
   cursor: pointer;
   display: flex; 
@@ -50,6 +53,13 @@ button{
   justify-content: center;
   outline:none;
   border:none;
+}
+
+.buttons{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
+  align-items: center;
 }
 
 input[type='number'], input[type='text']{
@@ -61,6 +71,10 @@ input[type='number'], input[type='text']{
   border-radius: 0.5rem;
   display: block;
   width: 100%;
+}
+input::placeholder{
+  font-size: 0.8em;
+  color: var(--gray);
 }
 input.text{
   display: inline;

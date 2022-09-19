@@ -1,5 +1,6 @@
 <script>
     import Modal from "./Modal.svelte"
+    import Sequencer from "./Sequencer.svelte"
     import {newLocalStore} from "./localStore"
     import {flip} from "svelte/animate"
     import {fly} from "svelte/transition"
@@ -9,16 +10,6 @@
     export let currentSong = {}
     export let songNumber = 0
     export let length = 0
-
-    $:length = $playlist.length
-
-    onMount(() => {
-        if($playlist.length > 0){
-            currentSong = $playlist[0]
-            songNumber = getSongNumber(currentSong)
-        }
-    })
-
     let newSong = {
         id: nanoid(),
         title: "",
@@ -26,11 +17,30 @@
         beatsPerBar: 4,
         volume: 100,
         startAt: -1,
+        sequence: [],
+        stopAt: -1
     }
     let songToEdit = {}
     let openMenu = false
     let addSongModal = false
     let editSongModal = false
+    let newSongSequence = false
+    let editSongSequence = false
+    $:length = $playlist.length
+
+
+    $: console.log(newSong)
+    onMount(() => {
+        if($playlist.length > 0){
+            $playlist = $playlist.map(s => {
+                if(!Array.isArray(s.sequence)){
+                    s.sequence = []
+                }
+                return s
+            })
+            currentSong = $playlist[0]
+        }
+    })
 
     function getSongNumber(song){
         let index = $playlist.findIndex(s => s?.id == song?.id)
@@ -40,7 +50,8 @@
         return 0
     }
 
-    function resetSong(){
+    function resetAddSong(){
+        newSongSequence = false
         newSong = {
             id: nanoid(),
             title: "",
@@ -48,7 +59,13 @@
             beatsPerBar: 4,
             volume: 100,
             startAt: -1,
+            sequence: [],
+            stopAt: -1
         }
+    }
+    function resetEditSong(){
+        editSongSequence = false
+        songToEdit = {}
     }
 
 
@@ -67,14 +84,15 @@
         }else{
             currentSong = $playlist[0] || {}
         }
-        
-
     }
+
+    $: songNumber = getSongNumber(currentSong)
+
 
     function saveSong(){
         $playlist = [...$playlist, {...newSong}]
         addSongModal = false
-        resetSong()
+        resetAddSong()
         // if it's the first song, assign it to currentSong
         if ($playlist.length == 1){
             currentSong = $playlist[0]
@@ -84,7 +102,6 @@
 
     function playSong(song){
         currentSong = song
-        songNumber = getSongNumber(currentSong)
         openMenu = false
     }
 
@@ -110,7 +127,6 @@
         }else{
             currentSong = $playlist[$playlist.length - 1] || {}
         }
-        songNumber = getSongNumber(currentSong)
     }
     export function nextSong(){
         let index = $playlist.findIndex(s => s.id == currentSong.id)
@@ -119,7 +135,6 @@
         }else{
             currentSong = $playlist[0] || {}
         }
-        songNumber = getSongNumber(currentSong)
     }
 
     function prev(song){
@@ -207,8 +222,16 @@
     .placeholder .material-symbols-outlined{
         font-size: 2rem;
     }
+
     .save{
         margin: 1rem 0;
+        width: 100%;
+    }
+    .events{
+        width: 100%;
+        background-color: var(--red-dark);
+        color:var(--verdi);
+        margin:  1rem 0 2rem;
     }
     .down{
         transform: rotate(180deg);
@@ -263,77 +286,113 @@
 {/if}
 
 
-<Modal on:close={resetSong} bind:open={addSongModal}>
+<Modal on:close={resetAddSong} bind:open={addSongModal}>
     <h2>New Song</h2>
-    <div>
-        <p class="label">
-            Title:
-        </p>
-        <input type="text" bind:value={newSong.title} />
-    </div>
-    <div>
-        <p class="label">
-            BPM: <input class="text" type="number" bind:value={newSong.tempo} step="1" min="30" max="300"/>
-        </p>
-        <input type="range" bind:value={newSong.tempo} step="1" min="30" max="300"/>
-    </div>
-    <div>
-        <p class="label">
-            Beats per bar: <input class="text" type="number" bind:value={newSong.beatsPerBar} step="1" min="1" max="16"/>
-        </p>
-        <input type="range" bind:value={newSong.beatsPerBar} step="1" min="1" max="16"/>
-    </div>
-    <div>
-        <p class="label">
-            Volume: <input class="text" type="number" bind:value={newSong.volume} step="1" min="1" max="100"/>
-        </p>
-        <input type="range" bind:value={newSong.volume} step="1" min="1" max="100"/>
-    </div>
-    <div>
-        <p class="label">
-            Start At Bar:
-        </p>
-        <input type="number" bind:value={newSong.startAt} step="1" />
-    </div>
-    <button class="save" on:click={saveSong}>
-        Save
-    </button>
+    {#if newSongSequence}
+        <Sequencer bind:value={newSong.sequence} on:confirm={() => newSongSequence = false}/>
+    {:else}
+        <div>
+            <p class="label">
+                Title:
+            </p>
+            <input type="text" bind:value={newSong.title} />
+        </div>
+        <div>
+            <p class="label">
+                BPM: <input class="text" type="number" bind:value={newSong.tempo} step="1" min="30" max="300"/>
+            </p>
+            <input type="range" bind:value={newSong.tempo} step="1" min="30" max="300"/>
+        </div>
+        <div>
+            <p class="label">
+                Beats per bar: <input class="text" type="number" bind:value={newSong.beatsPerBar} step="1" min="1" max="16"/>
+            </p>
+            <input type="range" bind:value={newSong.beatsPerBar} step="1" min="1" max="16"/>
+        </div>
+        <div>
+            <p class="label">
+                Volume: <input class="text" type="number" bind:value={newSong.volume} step="1" min="1" max="100"/>
+            </p>
+            <input type="range" bind:value={newSong.volume} step="1" min="1" max="100"/>
+        </div>
+        <div>
+            <p class="label">
+                Start At Bar:
+            </p>
+            <input type="number" bind:value={newSong.startAt} step="1" />
+        </div>
+        <div>
+            <p class="label">
+                Stop At Bar (0 to turn off):
+            </p>
+            <input type="number" bind:value={newSong.stopAt} step="1" />
+        </div>
+        <div>
+            <p class="label">
+                Song events: {newSong.sequence.length}
+            </p>
+            <button class="events" on:click={() => newSongSequence = true}>
+                {newSong.sequence.length > 0 ? "Edit" : "Add"}  Song Events
+            </button>
+        </div>
+        <button class="save" on:click={saveSong}>
+            Save Song
+        </button>
+    {/if}
 </Modal>
 
 
-<Modal on:close={resetSong} bind:open={editSongModal}>
+<Modal on:close={resetEditSong} bind:open={editSongModal}>
     <h2>Edit Song</h2>
-   <div>
-        <p class="label">
-            Title:
-        </p>
-        <input type="text" bind:value={songToEdit.title} />
-    </div>
-    <div>
-        <p class="label">
-            BPM: <input class="text" type="number" bind:value={songToEdit.tempo} step="1" min="30" max="300"/>
-        </p>
-        <input type="range" bind:value={songToEdit.tempo} step="1" min="30" max="300"/>
-    </div>
-    <div>
-        <p class="label">
-            Beats per bar: <input class="text" type="number" bind:value={songToEdit.beatsPerBar} step="1" min="1" max="16"/>
-        </p>
-        <input type="range" bind:value={songToEdit.beatsPerBar} step="1" min="1" max="16"/>
-    </div>
-    <div>
-        <p class="label">
-            Volume: <input class="text" type="number" bind:value={songToEdit.volume} step="1" min="1" max="100"/>
-        </p>
-        <input type="range" bind:value={songToEdit.volume} step="1" min="1" max="100"/>
-    </div>
-    <div>
-        <p class="label">
-            Start At Bar:
-        </p>
-        <input type="number" bind:value={songToEdit.startAt} step="1" />
-    </div>
-    <button class="save" on:click={saveEditSong}>
-        Save
-    </button>
+    {#if editSongSequence}
+        <Sequencer bind:value={songToEdit.sequence} on:confirm={() => editSongSequence = false}/>
+    {:else}
+        <div>
+            <p class="label">
+                Title:
+            </p>
+            <input type="text" bind:value={songToEdit.title} />
+        </div>
+        <div>
+            <p class="label">
+                BPM: <input class="text" type="number" bind:value={songToEdit.tempo} step="1" min="30" max="300"/>
+            </p>
+            <input type="range" bind:value={songToEdit.tempo} step="1" min="30" max="300"/>
+        </div>
+        <div>
+            <p class="label">
+                Beats per bar: <input class="text" type="number" bind:value={songToEdit.beatsPerBar} step="1" min="1" max="16"/>
+            </p>
+            <input type="range" bind:value={songToEdit.beatsPerBar} step="1" min="1" max="16"/>
+        </div>
+        <div>
+            <p class="label">
+                Volume: <input class="text" type="number" bind:value={songToEdit.volume} step="1" min="1" max="100"/>
+            </p>
+            <input type="range" bind:value={songToEdit.volume} step="1" min="1" max="100"/>
+        </div>
+        <div>
+            <p class="label">
+                Start At Bar:
+            </p>
+            <input type="number" bind:value={songToEdit.startAt} step="1" />
+        </div>
+        <div>
+            <p class="label">
+                Stop At Bar (0 to turn off):
+            </p>
+            <input type="number" bind:value={songToEdit.stopAt} step="1" />
+        </div>
+        <div>
+            <p class="label">
+                Song events: {songToEdit.sequence.length}
+            </p>
+            <button class="events" on:click={() => editSongSequence = true}>
+                {songToEdit.sequence.length > 0 ? "Edit" : "Add"} Song Events
+            </button>
+        </div>
+        <button class="save" on:click={saveEditSong}>
+            Save Song
+        </button>
+    {/if}
 </Modal>

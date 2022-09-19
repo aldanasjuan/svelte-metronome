@@ -12,6 +12,7 @@
 		}
 	}
 	function close() {
+		dispatch("close")
 		open = false;
 	}
 </script>
@@ -42,12 +43,13 @@
 	.container {
 		position: relative;
         overflow: auto;
-		padding: 16px;
+		padding: 1.5rem 1rem;
 		box-shadow: 0 0 3px #ccc;
-		width: 100%;
-		max-width: 80%;
+		width: 80%;
+		max-width: 600px;
 		background-color: var(--primary);
-		max-height: 80%;
+		height: 100%;
+		max-height: 85%;
 		border-radius: 7px;
 		box-shadow: 0 0 3px #ccc;
 		animation: popup 175ms 1 ease-in-out;
@@ -57,20 +59,29 @@
 		padding: 0.5rem;
 		line-height: 0;
 		position: absolute;
+		z-index: 1;
 		top: 0.5rem;
 		right: 0.5rem;
 		cursor: pointer;
 		user-select: none;
 	}
+	@media screen and (max-width: 1024px) {
+		.container {
+			width: 100%;
+			height: 100%;
+			max-width: none;
+			max-height: none;
+		}
+	}
 	@keyframes popup {
 		0% {
-			transform: scale(0);
+			transform: scaleY(0);
 		}
-		80% {
-			transform: scale(1.1);
+		70% {
+			transform: scaleY(1.1);
 		}
 		100% {
-			transform: scale(1);
+			transform: scaleY(1);
 		}
 	}
 </style>

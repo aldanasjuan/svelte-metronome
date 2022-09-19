@@ -8,13 +8,31 @@
     export let tempo = 120
     export let beatsPerBar = 4
     export let startAt = -1
+    export let stopAt = -1
     export let volume = 100
     export let length = 0
+    export let sequence = []
+    if(typeof startAt != "number")startAt = -1
     let currentBar = startAt
     let metronome = NewMetronome(tempo, beatsPerBar)
     let playing = false
+    let sequenceSteps = {
+        current:[], precount: []
+    }
 
-    metronome.onBarChange(() => currentBar++)
+    getSequenceSteps(sequence, currentBar)
+    metronome.onBarChange(() => {
+        currentBar++
+        getSequenceSteps(sequence, currentBar)
+        if(playing && typeof stopAt == "number" && stopAt > 0 && currentBar >= stopAt){
+            metronome.stop()
+            const barTime = (60 / tempo * beatsPerBar) * 1000
+            setTimeout(() => {
+                playing = false
+                currentBar = startAt
+            }, barTime)
+        }
+    })
 
 
     function start(){
@@ -39,6 +57,7 @@
     $: {
         if(!playing){
             currentBar = startAt
+            getSequenceSteps(sequence, currentBar)
         }
     }
 
@@ -56,6 +75,18 @@
         return value > max ? max : value < min ? min : value
     }
 
+    async function getSequenceSteps(sequence, current){
+        sequenceSteps = {
+            current: sequence.filter(s => {
+                let end = s.start + s.length
+                return current >= s.start && current < end
+            }),
+            precount: sequence.filter(s => {
+                return s.precount > 0 && current >= s.start - s.precount && current < s.start
+            }),
+        }
+    }
+
 
     onDestroy(() => {
         metronome.stop()
@@ -68,7 +99,7 @@
         user-select:none;
     }
     main {
-        max-width: 800px;
+        max-width: 1024px;
         margin:0 auto;
         display: grid;
         padding: 2rem 1rem;   
@@ -88,10 +119,8 @@
         background-color: var(--red);
     }
 
-    h1{
-        display:grid;
-        align-items: center;
-        width: 100%;
+    h1 {
+        margin:0;
         text-align: center;
         font-weight: 900;
         color: white;
@@ -124,13 +153,51 @@
         display:grid;
         grid-template-columns: 60px 60px;
     }
+    .sequence{
+        display:grid;
+        align-items: center;
+        grid-template-rows: min-content 1fr;
+        height: 100%;
+        width: 100%;
+    }
     .playlist{
         border-radius: 0.5rem;
         background-color: var(--yellow)
     }
+    .messages{
+        text-align: center;        
+        font-size: 1.5rem;
+        white-space: pre;
+
+    }
+    .messages span{
+        color: white;
+        text-transform: capitalize;
+    }
+    .credits{
+        width: 100%;
+        text-align: center;
+        font-size: 0.6rem;
+        margin-top: 1rem;
+        padding: 0.5rem;
+        color: var(--purple);
+        position: relative;
+        top:1.5rem;
+      }
+    .credits a{
+    color: var(--purple);
+    }
     @media screen and (max-width: 1024px) {
         .controls{
             grid-template-columns: 1fr;
+        }
+        .messages{
+            text-align: center;        
+            font-size: 1rem;
+            white-space: pre;
+        }
+        .sequence{
+            height: 230px;
         }
     }
 
@@ -163,9 +230,30 @@
     <p>
         Current Bar:
     </p>
-    <h1>
-        {currentBar || 0}
-    </h1>
+    <div class="sequence">
+        <p class="messages">
+            {#each sequenceSteps.current as event, i}
+                <span>
+                    {i > 0 ? ` - ` : ''}{event?.message}
+                </span>
+            {:else}
+                <span>
+                    
+                </span>
+            {/each}
+            {#if sequenceSteps.precount.length > 0}
+                {`<<<`}
+            {/if}
+            {#each sequenceSteps.precount as event, i}
+                <span>
+                    {i > 0 ? ` - ` : ''}{event?.message} <span style="color:var(--yellow)">@</span> {event.start}
+                </span>
+            {/each}
+        </p>
+        <h1>
+            {currentBar || 0}
+        </h1>
+    </div>
     {#if playing}
         <button class="playing" on:click={stop}>
             <span class="material-symbols-outlined play">
@@ -205,7 +293,17 @@
         </p>
         <input type="number" bind:value={startAt} step="1" />
     </div>
+    <div>
+        <p class="label">
+            Stop At Bar (0 to turn off):
+        </p>
+        <input type="number" bind:value={stopAt} step="1" />
+    </div>
 
+
+    <div class="credits">
+      Made by Juan Pedro Aldana Grajeda | <b><a href="https://github.com/aldanasjuan/svelte-metronome">Github</a></b>
+    </div>
 
 
 </main>
