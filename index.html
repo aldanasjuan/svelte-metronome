@@ -9,9 +9,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Metronome</title>
+    <style>
+      #mobile-anchor{
+        position:fixed;
+        bottom:0;
+        height:0;
+        width: 0;
+      }
+    </style>
   </head>
   <body id="app">
     <script type="module" src="/monkeypatch.js"></script>
     <script type="module" src="/src/main.js"></script>
+    <div id="mobile-anchor"></div>
+
+    <script>
+      let r = document.getElementById("mobile-anchor").getBoundingClientRect()
+      window.anchorBottom = r.bottom
+      document.body.style.setProperty("--window-height", `${r.bottom}px`)
+      window.addEventListener("resize", () => {
+        let r = document.getElementById("mobile-anchor").getBoundingClientRect()
+        window.anchorBottom = r.bottom
+        document.body.style.setProperty("--window-height", `${r.bottom}px`)
+      })
+    </script>
   </body>
 </html>

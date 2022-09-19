@@ -35,7 +35,7 @@
 		top: 0;
 		left: 0;
 		width: 100vw;
-		height: 100vh;
+		height: var(--window-height, 100%);
 		background-color: rgba(255, 255, 255, 0.1);
 		display: grid;
 		place-items: center;
@@ -44,14 +44,12 @@
 		position: relative;
         overflow: auto;
 		padding: 1.5rem 1rem;
-		box-shadow: 0 0 3px #ccc;
 		width: 80%;
 		max-width: 600px;
 		background-color: var(--primary);
-		height: 100%;
+		height: var(--window-height, 100%);
 		max-height: 85%;
 		border-radius: 7px;
-		box-shadow: 0 0 3px #ccc;
 		animation: popup 175ms 1 ease-in-out;
 	}
 	.close {
@@ -68,7 +66,7 @@
 	@media screen and (max-width: 1024px) {
 		.container {
 			width: 100%;
-			height: 100%;
+			height: var(--window-height, 100%);
 			max-width: none;
 			max-height: none;
 		}

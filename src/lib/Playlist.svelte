@@ -28,8 +28,6 @@
     let editSongSequence = false
     $:length = $playlist.length
 
-
-    $: console.log(newSong)
     onMount(() => {
         if($playlist.length > 0){
             $playlist = $playlist.map(s => {
