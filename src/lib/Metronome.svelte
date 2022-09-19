@@ -167,7 +167,7 @@
     .messages{
         text-align: center;        
         font-size: 1.5rem;
-        white-space: pre;
+        white-space: normal;
 
     }
     .messages span{
@@ -194,7 +194,6 @@
         .messages{
             text-align: center;        
             font-size: 1rem;
-            white-space: pre;
         }
         .sequence{
             height: 230px;
