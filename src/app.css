@@ -14,11 +14,9 @@ body, html{
   width: 100%;
   padding:0;
   margin:0;
-}
-main{
   overflow:auto;
-  height: 100%;
 }
+
 
 * {
   -webkit-tap-highlight-color: transparent;
