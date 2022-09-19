@@ -1,15 +1,15 @@
 {
-    "background_color": "#12130F",
-    "description": "A metronome app with a playlist and a sequencer of messages per song.",
-    "display": "fullscreen",
+	"background_color": "#12130F",
+	"description": "A metronome app with a playlist and a sequencer of messages per song.",
+	"display": "fullscreen",
 	"start_url": "/app",
-    "icons": [
-      {
-        "src": "/icon.png",
-        "sizes": "64x64",
-        "type": "image/png"
-      }
-    ],
-    "name": "Metronome",
-    "short_name": "Metronome"
-  }
+	"icons": [
+		{
+			"src": "/icon.png",
+			"sizes": "64x64",
+			"type": "image/png"
+		}
+	],
+	"name": "Metronome",
+	"short_name": "Metronome"
+}
