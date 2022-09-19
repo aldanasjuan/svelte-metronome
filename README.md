@@ -23,6 +23,12 @@ I added a sequencer component so you can display messages on the metronome scree
 
 You can find this on the playlist menu when you add or edit a song. There's a button that says "Add Song Events".
 
+## Disclaimer
+
+I made this for my own drumming practice so I probably won't be too active in mantain or adding requested features to the repo unless it's something I feel it's worth the time. 
+
+Also, this is a work in progress and may change from time to time. I always try to add backwards compatibility so nothing breaks on old versions but let me know if things do break. 
+
 ## Demo
 
 https://svelte-metronome.vercel.app
