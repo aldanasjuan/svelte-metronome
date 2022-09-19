@@ -2,7 +2,7 @@
 	"background_color": "#12130F",
 	"description": "A metronome app with a playlist and a sequencer of messages per song.",
 	"display": "fullscreen",
-	"start_url": "/app",
+	"start_url": "/",
 	"icons": [
 		{
 			"src": "/icon.png",
