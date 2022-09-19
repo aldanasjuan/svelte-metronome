@@ -3,27 +3,29 @@
   import Playlist from "./lib/Playlist.svelte"
   let currentSong = {}
   let songNumber = 0
-
   let nextSong;
   let prevSong;
   let length;
+  let clearSong;
 
 </script>
 
 
 
-<Playlist bind:currentSong bind:songNumber bind:prevSong bind:nextSong bind:length/>
+<Playlist bind:currentSong bind:songNumber bind:prevSong bind:nextSong bind:length bind:clearSong/>
 {#key currentSong}
   <Metronome 
     on:prev={prevSong}
     on:next={nextSong}
-    songName={currentSong.title || ""} 
-    {songNumber} tempo={currentSong?.tempo} 
+    on:clearSong={clearSong}
+    songName={currentSong?.title} 
+    {songNumber} 
+    tempo={currentSong?.tempo} 
     beatsPerBar={currentSong?.beatsPerBar} 
-    startAt={currentSong?.startAt || -1} 
+    startAt={currentSong?.startAt} 
     volume={currentSong?.volume}
-    stopAt={currentSong?.stopAt || -1}
-    sequence={currentSong?.sequence || []}
+    stopAt={currentSong?.stopAt}
+    sequence={currentSong?.sequence}
     {length}
   />
 {/key}

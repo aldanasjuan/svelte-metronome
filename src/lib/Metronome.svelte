@@ -142,7 +142,15 @@
         align-items: center;
     }
     .song .icon{
+        position: relative;
+        top: 2px;
         margin-right: 0.5rem;
+    }
+    .cancel{
+        position: relative;
+        top: 2px;
+        margin-left: 1rem;
+        cursor:pointer;
     }
     .buttons button{
         font-size: 2rem;
@@ -208,7 +216,11 @@
             {#if songName && songNumber}
                 <span class="material-symbols-outlined icon">
                     lyrics
-                </span> {songNumber}. {songName}
+                </span> {songNumber}. {songName} 
+
+                <span class='material-symbols-outlined cancel' on:click={() => dispatch("clearSong")}>
+                    cancel
+                </span>
             {/if}
         </p>
         {#if length > 1}

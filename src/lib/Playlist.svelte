@@ -36,7 +36,7 @@
                 }
                 return s
             })
-            currentSong = $playlist[0]
+            currentSong = $playlist[0] || {}
         }
     })
 
@@ -46,6 +46,10 @@
             return index + 1
         }
         return 0
+    }
+
+    export function clearSong(){
+        currentSong = {}
     }
 
     function resetAddSong(){
