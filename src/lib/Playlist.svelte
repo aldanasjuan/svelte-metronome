@@ -168,6 +168,7 @@
         cursor:pointer;
     }
     .menu{
+        z-index: 999;
         position: fixed;
         top: 0;
         right:0;
